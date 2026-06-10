@@ -31,9 +31,35 @@
   | 465           | 0.0.0.0/0 | SMTPS                 |
 
 
+
+
 > We are creating this master machine because we will configure Jenkins master, eksctl, EKS cluster creation from here.
 
 Install & Configure Docker by using below command, "NewGrp docker" will refresh the group config hence no need to restart the EC2 machine.
+
+# terraform-eks-jenkin
+```bash
+terraform version
+terraform init
+terraform plan
+terraform apply
+terraform destroy
+```
+### Pre-requisites to implement this project:
+
+AWSCLI Install:
+```bash
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  sudo apt install unzip
+  unzip awscliv2.zip
+  sudo ./aws/install
+```
+  
+Configure AWSCLI:
+```bash
+aws --version
+aws configure
+```
 
 ```bash
 sudo apt update
@@ -43,53 +69,56 @@ sudo apt-get install docker.io -y
 
 sudo usermod -aG docker ubuntu && newgrp docker
 
-sudo chown $USER /var/run/docker.sock 
+DOCKER COMPOSE INSTALL
+```
+mkdir -p ~/.docker/cli-plugins/
 
-OR
+curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
+  -o ~/.docker/cli-plugins/docker-compose
 
-sudo reboot
+chmod +x ~/.docker/cli-plugins/docker-compose
 
-OR
+```
 
-sudo chmod 777 /var/run/docker.sock
+```
+nginx install: sudo apt install nginx -y
+Start Nginx: sudo systemctl start nginx
+Enable autostart on boot: sudo systemctl enable nginx
+Check if it is running: sudo systemctl status nginx
+
+
 ```
 # Install and configure Jenkins (Master machine)
 ## Sometimes Jenkins older versions are cached, clear them:
 ```bash
-  sudo rm -f /etc/apt/sources.list.d/jenkins.list
-  sudo rm -f /usr/share/keyrings/jenkins-keyring.asc
+sudo apt update && sudo apt upgrade -y
 ```
 
 ```bash
-sudo apt update -y
-sudo apt install fontconfig openjdk-17-jre -y
+sudo apt install fontconfig openjdk-21-jre -y
+java -version
 
-sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
-  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
-  
-echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
-  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
-  /etc/apt/sources.list.d/jenkins.list > /dev/null
-  
-sudo apt update -y
-```
-## Confirm the latest Jenkins version is available
-```bash
-  apt-cache madison jenkins
-```
-## Install the latest Jenkins version
-```bash
-  sudo apt install jenkins -y
-```
-## Verify Jenkins version after installation
-```bash
-  sudo systemctl status jenkins
-  jenkins --version
-```
-- <b>Now, access Jenkins Master on the browser on port 8080 and configure it:</b>
-```bash
-  sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-```
+sudo mkdir -p /etc/apt/keyrings
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt update
+sudo apt install jenkins -y
+
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+
+sudo systemctl status jenkins
+
+sudo ufw allow 8080
+sudo ufw status
+
+http://your_server_ip_or_localhost:8080
+
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+
 - <b>install jenkins suggested plugins </b>.
 ## Configure AWSCli (Master machine)
   - IAM user with **access keys and secret access keys**
