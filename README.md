@@ -45,21 +45,7 @@ terraform plan
 terraform apply
 terraform destroy
 ```
-### Pre-requisites to implement this project:
 
-AWSCLI Install:
-```bash
-  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  sudo apt install unzip
-  unzip awscliv2.zip
-  sudo ./aws/install
-```
-  
-Configure AWSCLI:
-```bash
-aws --version
-aws configure
-```
 
 ```bash
 sudo apt update
@@ -120,6 +106,8 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
 
 - <b>install jenkins suggested plugins </b>.
+
+
 ## Configure AWSCli (Master machine)
   - IAM user with **access keys and secret access keys**
   - AWSCLI should be configured
